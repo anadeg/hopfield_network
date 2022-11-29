@@ -149,6 +149,15 @@ class HopfieldNetwork:
                 result += x[i][j]
         return np.abs(result)
 
+    def save(self, w_name, x_name):
+        np.savetxt(w_name, np.array(self.W))
+        np.savetxt(x_name, np.array(self.X))
+
+    def read(self, w_name, x_name):
+        self.W = list(np.loadtxt(w_name))
+        X = np.loadtxt(x_name)
+        self.X = [[X[i]] for i in range(X.shape[0])]
+
 
 def show(X):
     plt.matshow(X)
@@ -156,12 +165,15 @@ def show(X):
 
 
 if __name__ == '__main__':
-    file = "digits - sample3.csv"
+    file = "digits - sample2.csv"
     hn = HopfieldNetwork(file)
-    # show(hn.X)
+    show(hn.X)
 
-    hn.fit(0.001, 0.9)
-    print('=======================================================')
-    processed = hn.recognise(iters=100)
+    hn.read(os.path.join('savings', 'w2.txt'), os.path.join('savings', 'x2.txt'))
+    # processed = hn.recognise(iters=0)
+    hn.X, hn.W = np.array(hn.X), np.array(hn.W)
+
+    # нумпай точнее работает с малыми числами
+    processed = np.tanh(hn.X.reshape(1, -1) @ hn.W).reshape(hn.n, hn.n)
     show(processed)
 

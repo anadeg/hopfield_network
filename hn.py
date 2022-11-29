@@ -92,6 +92,14 @@ class HopfieldNetwork:
     def fit(self, error, h):
         self.update_weight(error, h)
 
+    def save(self, w_name, x_name):
+        np.savetxt(w_name, self.W)
+        np.savetxt(x_name, self.X)
+
+    def read(self, w_name, x_name):
+        self.W = np.loadtxt(w_name)
+        self.X = np.loadtxt(x_name)
+
 
 def show(X):
     plt.matshow(X)
@@ -99,12 +107,13 @@ def show(X):
 
 
 if __name__ == '__main__':
-    file = "digits - sample1.csv"
+    file = "digits - sample2.csv"
     hn = HopfieldNetwork(file)
     show(hn.X)
 
-    hn.fit(0.0001, 0.9)
+    hn.fit(0.00001, 0.9)
     print('=======================================================')
     processed = hn.recognise()
+    hn.save(os.path.join('savings', 'w2.txt'), os.path.join('savings', 'x2.txt'))
     show(processed)
 
