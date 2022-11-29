@@ -78,7 +78,6 @@ class HopfieldNetwork:
         while run and learning_iters < iters:
             learning_iters += 1
             temp_x = self.activate(self.X.reshape(1, -1) @ self.W)
-            temp_x = self.activate(temp_x)
             self.X = temp_x
             new = self.activate(self.X.reshape(1, -1) @ self.W)
             if np.allclose(old, new):
@@ -86,6 +85,8 @@ class HopfieldNetwork:
                 print(f'iteration {learning_iters}')
             else:
                 old = new
+            if learning_iters % 1000 == 0:
+                print(f'iteration {learning_iters}')
         return self.activate(self.X.reshape(1, -1) @ self.W).reshape(self.n, self.n)
 
     def fit(self, error, h):
@@ -98,12 +99,12 @@ def show(X):
 
 
 if __name__ == '__main__':
-    file = "digits - sample3.csv"
+    file = "digits - sample1.csv"
     hn = HopfieldNetwork(file)
     show(hn.X)
 
     hn.fit(0.0001, 0.9)
     print('=======================================================')
-    processed = hn.recognise(iters=300)
+    processed = hn.recognise()
     show(processed)
 
