@@ -74,14 +74,14 @@ class HopfieldNetwork:
     def recognise(self, iters=np.inf):
         run = True
         learning_iters = 0
-        old_energy = np.sum(self.activate(self.X.reshape(1, -1) @ self.W))
+        old_energy = self.activate(self.X.reshape(1, -1) @ self.W)
         while run and learning_iters < iters:
             learning_iters += 1
             temp_x = self.activate(self.X.reshape(1, -1) @ self.W)
             temp_x = self.activate(temp_x)
             self.X = temp_x
-            new_energy = np.sum(self.activate(self.X.reshape(1, -1) @ self.W))
-            if np.allclose([old_energy], [new_energy]):
+            new_energy = self.activate(self.X.reshape(1, -1) @ self.W)
+            if np.allclose(old_energy, new_energy):
                 run = False
                 print(f'iteration {learning_iters}')
             else:
@@ -104,6 +104,6 @@ if __name__ == '__main__':
 
     hn.fit(0.0001, 0.9)
     print('=======================================================')
-    processed = hn.recognise()
+    processed = hn.recognise(iters=300)
     show(processed)
 
