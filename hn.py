@@ -98,7 +98,7 @@ def show(X):
 
 
 if __name__ == '__main__':
-    file = "digits - sample1.csv"
+    file = "digits - sample3.csv"
     hn = HopfieldNetwork(file)
     show(hn.X)
 
