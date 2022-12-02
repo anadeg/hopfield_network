@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from time import time
+
 
 # количество обучающих выборок
 LEARNING_SAMPLES = 10
@@ -19,9 +21,6 @@ class HopfieldNetwork:
         self.image_size = self.n * self.n
         self.W = np.zeros((self.image_size, self.image_size))
         self.known_digits = np.array(self.read_digits())
-
-    def calculate_weights(self):
-        pass
 
     # считывание известных цифр
     @staticmethod
@@ -37,6 +36,7 @@ class HopfieldNetwork:
     def update_weight(self, error, h):
         iter_num = 0
         run = True
+        start = time()
         while run:
             iter_num += 1
             oldW = self.W.copy()
@@ -60,6 +60,8 @@ class HopfieldNetwork:
                 print(f'iteration {iter_num}\t|\tdifference {diff}')
             if diff < error:
                 run = False
+                end = time()
+                print(end - start, 'ms')
                 break
 
     @staticmethod
@@ -74,17 +76,19 @@ class HopfieldNetwork:
     def recognise(self, iters=np.inf):
         run = True
         learning_iters = 0
-        old = self.activate(self.X.reshape(1, -1) @ self.W)
+        old_2 = self.X
+        old_1 = self.activate(self.X.reshape(1, -1) @ self.W)
         while run and learning_iters < iters:
             learning_iters += 1
             temp_x = self.activate(self.X.reshape(1, -1) @ self.W)
             self.X = temp_x
             new = self.activate(self.X.reshape(1, -1) @ self.W)
-            if np.allclose(old, new):
+            if np.allclose(old_2.reshape(-1, self.image_size), new):
                 run = False
                 print(f'iteration {learning_iters}')
             else:
-                old = new
+                old_2 = old_1
+                old_1 = new
             if learning_iters % 1000 == 0:
                 print(f'iteration {learning_iters}')
         return self.activate(self.X.reshape(1, -1) @ self.W).reshape(self.n, self.n)
@@ -114,6 +118,6 @@ if __name__ == '__main__':
     hn.fit(0.00001, 0.9)
     print('=======================================================')
     processed = hn.recognise()
-    hn.save(os.path.join('savings', 'w2.txt'), os.path.join('savings', 'x2.txt'))
+    # hn.save(os.path.join('savings', 'w2.txt'), os.path.join('savings', 'x2.txt'))
     show(processed)
 
